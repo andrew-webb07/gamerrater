@@ -1,0 +1,15 @@
+[
+    {
+        "model": "gamerraterapi.game",
+        "pk": 1,
+        "fields": {
+            "title": "The Legend of Zelda: Ocarina of Time",
+            "description": "Link saves the world",
+            "designer": "Nintendo",
+            "year_released": 1998,
+            "number_of_players": 1,
+            "estimated_time_to_play": "35:00:00",
+            "age_recommendation": 12
+        }
+    }
+]

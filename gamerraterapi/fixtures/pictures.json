@@ -1,0 +1,11 @@
+[
+    {
+        "model": "gamerraterapi.picture",
+        "pk": 1,
+        "fields": {
+            "image": "https://live.staticflickr.com/5554/14884701670_0ccc973a8d_b.jpg",
+            "player": 1,
+            "game": 1
+        }
+    }
+]

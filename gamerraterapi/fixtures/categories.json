@@ -1,0 +1,9 @@
+[
+    {
+        "model": "gamerraterapi.category",
+        "pk": 1,
+        "fields": {
+            "label": "fantasy"
+        }
+    }
+]
