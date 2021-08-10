@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import serializers
 from gamerraterapi.models import Rating, Player, Game
+from django.contrib.auth.models import User
 
 
 class RatingView(ViewSet):
@@ -60,12 +61,15 @@ class RatingView(ViewSet):
         except ValidationError as ex:
             return Response({"reason": ex.message}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
 class RatingSerializer(serializers.ModelSerializer):
     """JSON serializer for ratings
 
     Arguments:
         serializers
     """
+
     class Meta:
         model = Rating
         fields = ('id', 'rating', 'player', 'game')
