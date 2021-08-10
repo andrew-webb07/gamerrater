@@ -1,0 +1,20 @@
+[
+    {
+        "model": "gamerraterapi.review",
+        "pk": 1,
+        "fields": {
+            "review": "Such a great game!",
+            "player": 2,
+            "game": 1
+        }
+    },
+    {
+        "model": "gamerraterapi.review",
+        "pk": 2,
+        "fields": {
+            "review": "This game is the GOAT",
+            "player": 1,
+            "game": 1
+        }
+    }
+]

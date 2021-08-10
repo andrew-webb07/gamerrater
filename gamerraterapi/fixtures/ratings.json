@@ -1,0 +1,20 @@
+[
+    {
+        "model": "gamerraterapi.rating",
+        "pk": 1,
+        "fields": {
+            "rating": 9,
+            "player": 2,
+            "game": 1
+        }
+    },
+    {
+        "model": "gamerraterapi.rating",
+        "pk": 2,
+        "fields": {
+            "rating": 10,
+            "player": 2,
+            "game": 1
+        }
+    }
+]

@@ -5,4 +5,12 @@
         "--load-plugins=pylint_django",
         "--django-settings-module=gamerrater.settings"
     ],
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "Gamer Rater",
+            "database": "./db.sqlite3"
+        }
+    ],
 }
