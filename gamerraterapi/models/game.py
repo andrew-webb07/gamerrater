@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
+from .rating import Rating
 
 class Game(models.Model):
     title = models.CharField(max_length=100)
@@ -11,15 +12,17 @@ class Game(models.Model):
     age_recommendation = models.IntegerField()
     categories = models.ManyToManyField("Category", through="GameCategory", related_name="categories")
     
-    # @property
-    # def average_rating(self):
-    #     """Average rating calculated attribute for each game"""
-    #     ratings = GameRating.objects.filter(game=self)
+    @property
+    def average_rating(self):
+        """Average rating calculated attribute for each game"""
+        ratings = Rating.objects.filter(game=self)
 
-    #     # Sum all of the ratings for the game
-    #     total_rating = 0
-    #     for rating in ratings:
-    #         total_rating += rating.rating
-
-    #     # Calculate the averge and return it.
-    #     # If you don't know how to calculate averge, Google it.
+        total_rating = 0
+        for rating in ratings:
+            total_rating += rating.rating
+        
+        if total_rating == 0:
+            return 0
+        else:
+            average_rating = total_rating / len(ratings)
+            return average_rating

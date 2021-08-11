@@ -47,9 +47,9 @@ class RatingView(ViewSet):
             Response -- JSON serialized rating instance
         """
         player = Player.objects.get(user=request.auth.user)
-        game = Game.objects.get(user=request.data["gameId"])
+        game = Game.objects.get(pk=request.data["gameId"])
         rating = Rating()
-        rating.rating = request.data["title"]
+        rating.rating = request.data["rating"]
         rating.player = player
         rating.game = game
         
@@ -61,7 +61,19 @@ class RatingView(ViewSet):
         except ValidationError as ex:
             return Response({"reason": ex.message}, status=status.HTTP_400_BAD_REQUEST)
 
+class RatingUserSerializer(serializers.ModelSerializer):
+    """JSON serializer for event organizer's related Django user"""
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
 
+class PlayerSerializer(serializers.ModelSerializer):
+    """JSON serializer for event organizer"""
+    user = RatingUserSerializer(many=False)
+
+    class Meta:
+        model = Player
+        fields = ['user', 'bio']
 
 class RatingSerializer(serializers.ModelSerializer):
     """JSON serializer for ratings
@@ -69,6 +81,7 @@ class RatingSerializer(serializers.ModelSerializer):
     Arguments:
         serializers
     """
+    player = PlayerSerializer(many=False)
 
     class Meta:
         model = Rating
