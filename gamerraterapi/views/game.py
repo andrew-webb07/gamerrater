@@ -5,7 +5,8 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from gamerraterapi.models import Game
+from gamerraterapi.models import Game, Category
+import datetime
 
 class GameView(ViewSet):
     """Gamer Rater Games"""
@@ -23,7 +24,7 @@ class GameView(ViewSet):
         game.designer = request.data["designer"]
         game.year_released = request.data["yearReleased"]
         game.number_of_players = request.data["numberOfPlayers"]
-        game.estimated_time_to_play = request.data["estimatedTimeToPlay"]
+        game.estimated_time_to_play = datetime.timedelta(hours=request.data["estimatedTimeToPlay"])
         game.age_recommendation = request.data["ageRecommendation"]
 
         try:
@@ -97,6 +98,24 @@ class GameView(ViewSet):
             games, many=True, context={'request': request})
         return Response(serializer.data)
 
+    def destroy(self, request, pk=None):
+        """Handle DELETE requests for a single game
+
+        Returns:
+            Response -- 200, 404, or 500 status code
+        """
+        try:
+            game = Game.objects.get(pk=pk)
+            game.delete()
+
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        except Game.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class GameSerializer(serializers.ModelSerializer):
     """JSON serializer for games
@@ -106,5 +125,5 @@ class GameSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Game
-        fields = ('id', 'title', 'description', 'designer', 'year_released','number_of_players', 'estimated_time_to_play', 'age_recommendation')
+        fields = ('id', 'title', 'description', 'designer', 'year_released','number_of_players', 'estimated_time_to_play', 'age_recommendation', 'categories', 'average_rating')
         depth = 1
