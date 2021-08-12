@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
 from rest_framework import routers
+from django.conf import settings
+from django.conf.urls.static import static
 from gamerraterapi.views import  register_user, login_user, CategoryView, PlayerView, GameView, PictureView, ReviewView, RatingView
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -33,4 +35,5 @@ urlpatterns = [
     path('register', register_user),
     path('login', login_user),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework'))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

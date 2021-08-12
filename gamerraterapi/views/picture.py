@@ -8,7 +8,12 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from gamerraterapi.models import Game, Picture, Player
+import uuid
+from django.core.files.base import ContentFile
+import base64
+
 
 class PictureView(ViewSet):
     def create(self, request):
@@ -18,12 +23,17 @@ class PictureView(ViewSet):
             Response -- JSON serialized picture instance
         """
 
+        
         player = Player.objects.get(user=request.auth.user)
-        game = Game.objects.get(user=request.data["gameId"])
+        game = Game.objects.get(id=request.data["gameId"])
         picture = Picture()
-        picture.image = request.data["image"]
+        format, imgstr = request.data["image"].split(';base64,')
+        ext = format.split('/')[-1]
+        data = ContentFile(base64.b64decode(imgstr), name=f'{request.data["gameId"]}-{uuid.uuid4()}.{ext}')
+        picture.image = data
         picture.player = player
         picture.game = game
+        
 
         try:
             picture.save()
@@ -97,12 +107,28 @@ class PictureView(ViewSet):
             pictures, many=True, context={'request': request})
         return Response(serializer.data)
 
+class PictureUserSerializer(serializers.ModelSerializer):
+    """JSON serializer for event organizer's related Django user"""
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+class PlayerSerializer(serializers.ModelSerializer):
+    """JSON serializer for event organizer"""
+    user = PictureUserSerializer(many=False)
+
+    class Meta:
+        model = Player
+        fields = ['user', 'bio']
+
 class PictureSerializer(serializers.ModelSerializer):
     """JSON serializer for pictures
 
     Arguments:
         serializer type
     """
+    player = PlayerSerializer(many=False)
+
     class Meta:
         model = Picture
         fields = ('id', 'image', 'player', 'game')
