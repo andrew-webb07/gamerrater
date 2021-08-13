@@ -5,6 +5,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
+from django.db.models import Q
 from gamerraterapi.models import Game, Category
 import datetime
 
@@ -93,11 +94,58 @@ class GameView(ViewSet):
         Returns:
             Response -- JSON serialized list of games
         """
+
+
         games = Game.objects.all()
+
+        search_text = self.request.query_params.get('q', None)
+
+        if search_text is not None:
+            games = Game.objects.filter(
+                    Q(title__contains=search_text) |
+                    Q(description__contains=search_text) |
+                    Q(designer__contains=search_text)
+)
+        sort_text = self.request.query_params.get('orderby', None)
+
+        if sort_text is not None:
+            games = Game.objects.order_by(sort_text)
 
         serializer = GameSerializer(
             games, many=True, context={'request': request})
         return Response(serializer.data)
+
+#     def search(self, request):
+#         """Handle GET requests to games resource
+
+#         Returns:
+#             Response -- JSON serialized list of games
+#         """
+#         search_text = self.request.query_params.get('q', None)
+
+#         games = Game.objects.filter(
+#                 Q(title__contains=search_text) |
+#                 Q(description__contains=search_text) |
+#                 Q(designer__contains=search_text)
+# )
+
+#         serializer = GameSerializer(
+#             games, many=True, context={'request': request})
+#         return Response(serializer.data)
+
+    # def sort(self,request):
+    #     """Handle GET requests to games resource
+
+    #     Returns:
+    #         Response -- JSON serialized list of games
+    #     """
+    #     sort_text = self.request.query_params.get('q', None)
+
+    #     games = Game.objects.order_by(sort_text)
+
+    #     serializer = GameSerializer(
+    #         games, many=True, context={'request': request})
+    #     return Response(serializer.data)        
 
 
 class GameSerializer(serializers.ModelSerializer):
